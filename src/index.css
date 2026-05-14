@@ -28,9 +28,6 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
     "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   background-color: #F5EDE0;
-  background-image:
-    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(180, 140, 100, 0.04) 40px, rgba(180, 140, 100, 0.04) 41px),
-    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(180, 140, 100, 0.04) 40px, rgba(180, 140, 100, 0.04) 41px);
   color: var(--ink);
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
