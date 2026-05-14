@@ -28,7 +28,7 @@ export default function ScoreCard({ score, onToggle }) {
   const confirmDownload = () => {
     setShowCopyright(false)
     addHistory(score)
-    window.open(`/api/download?url=${encodeURIComponent(score.url)}`, '_blank')
+    window.open(score.url, '_blank')
     onToggle?.()
   }
 
