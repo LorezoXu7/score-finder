@@ -26,6 +26,16 @@ export const periods = [
     ],
   },
   {
+    key: 'belcanto',
+    name: '美声时期 (Bel Canto)',
+    years: '1810-1850',
+    composers: [
+      { name: '罗西尼 (Rossini)', query: 'Rossini' },
+      { name: '贝里尼 (Bellini)', query: 'Bellini' },
+      { name: '多尼采蒂 (Donizetti)', query: 'Donizetti' },
+    ],
+  },
+  {
     key: 'romantic',
     name: '浪漫时期',
     years: '1820-1900',
