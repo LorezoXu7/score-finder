@@ -32,8 +32,6 @@ function setCache(key, data) {
 
 // 生产环境：提供前端静态文件
 if (hasDist) {
-  const distPath = path.resolve(path.join(__dirname, '..', 'dist'));
-
   app.use((req, res, next) => {
     if (req.path.startsWith('/api')) return next();
 
