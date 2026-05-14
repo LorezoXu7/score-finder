@@ -8,65 +8,73 @@ export default function Home() {
   return (
     <div className="page">
       {/* 头部 */}
-      <div style={{ textAlign: 'center', padding: '32px 0 20px' }}>
-        <div style={{
-          fontSize: 48,
-          marginBottom: 8,
-          color: '#C9A84C',
-          textShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          fontFamily: 'var(--serif)',
-          lineHeight: 1,
-          letterSpacing: 8,
-        }}>
-          ♫ ♯
+      <div style={{ textAlign: 'center', padding: '28px 0 16px' }}>
+        {/* 顶部装饰 */}
+        <div style={{ color: '#D4A853', fontSize: 12, letterSpacing: 10, marginBottom: 12, opacity: 0.7 }}>
+          ✦ ✦ ✦
         </div>
-        <h1
-          style={{
-            fontSize: 40,
-            fontWeight: 700,
-            color: '#3E2723',
-            marginBottom: 4,
-            letterSpacing: 6,
-            fontFamily: 'var(--serif)',
-            textShadow: '0 1px 0 rgba(0,0,0,0.08)',
-          }}
-        >
-          靠谱儿
-        </h1>
-        <p style={{
-          fontSize: 15,
-          color: '#8D6E63',
-          marginBottom: 20,
-          fontFamily: 'var(--art)',
-          letterSpacing: 2,
+
+        {/* 主标题 */}
+        <div style={{
+          display: 'inline-block',
+          position: 'relative',
+          padding: '0 40px',
+          marginBottom: 6,
         }}>
-          古典乐谱 · 触手可及
+          <span style={{
+            position: 'absolute', left: 0, top: '50%',
+            width: 30, height: 1,
+            background: 'linear-gradient(90deg, transparent, #D4A853)',
+          }} />
+          <span style={{
+            position: 'absolute', right: 0, top: '50%',
+            width: 30, height: 1,
+            background: 'linear-gradient(270deg, transparent, #D4A853)',
+          }} />
+          <h1 style={{
+            fontSize: 44,
+            fontWeight: 700,
+            color: '#2C1810',
+            letterSpacing: 10,
+            fontFamily: 'var(--serif)',
+          }}>
+            靠谱儿
+          </h1>
+        </div>
+
+        <p style={{
+          fontSize: 13,
+          color: '#8B7355',
+          marginBottom: 18,
+          letterSpacing: 4,
+          fontFamily: 'var(--serif)',
+          textTransform: 'uppercase',
+        }}>
+          Cantus · Quaerere · Invenire
         </p>
+
         <SearchBar large />
       </div>
 
-      <div className="divider">❦</div>
+      <div className="ornament">❧ ❧ ❧</div>
 
       {/* 快捷分类 */}
       <div style={{ marginTop: 4 }}>
-        <h3
-          style={{
-            fontSize: 17,
-            color: '#4E342E',
-            marginBottom: 14,
-            fontFamily: 'var(--serif)',
-            letterSpacing: 1,
-          }}
-        >
-          ◆ 按作品类型浏览
+        <h3 style={{
+          textAlign: 'center',
+          fontSize: 16,
+          color: '#6B1D2F',
+          marginBottom: 16,
+          fontFamily: 'var(--serif)',
+          letterSpacing: 4,
+        }}>
+          —— 按作品类型浏览 ——
         </h3>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
-            gap: 10,
-          }}
-        >
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+          gap: 12,
+        }}>
           {categories.map((cat) => (
             <button
               key={cat.key}
@@ -76,20 +84,19 @@ export default function Home() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: 6,
-                padding: '18px 8px',
+                gap: 8,
+                padding: '20px 8px',
                 cursor: 'pointer',
               }}
             >
-              <span style={{ fontSize: 30 }}>{cat.icon}</span>
-              <span
-                style={{
-                  fontSize: 14,
-                  fontWeight: 600,
-                  color: '#4E342E',
-                  fontFamily: 'var(--serif)',
-                }}
-              >
+              <span style={{ fontSize: 28 }}>{cat.icon}</span>
+              <span style={{
+                fontSize: 14,
+                fontWeight: 600,
+                color: '#2C1810',
+                fontFamily: 'var(--serif)',
+                letterSpacing: 2,
+              }}>
                 {cat.name}
               </span>
             </button>
@@ -97,33 +104,32 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="divider">♪</div>
+      <div className="ornament">❧ ❧ ❧</div>
 
       {/* 快速入口 */}
       <div>
-        <h3
-          style={{
-            fontSize: 17,
-            color: '#4E342E',
-            marginBottom: 14,
-            fontFamily: 'var(--serif)',
-            letterSpacing: 1,
-          }}
-        >
-          ◆ 快速搜索
+        <h3 style={{
+          textAlign: 'center',
+          fontSize: 16,
+          color: '#6B1D2F',
+          marginBottom: 16,
+          fontFamily: 'var(--serif)',
+          letterSpacing: 4,
+        }}>
+          —— 快速搜索 ——
         </h3>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {['Don Giovanni', 'Mozart', 'Verdi', 'Beethoven', 'Chopin', 'Puccini'].map(
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'center' }}>
+          {['Don Giovanni', 'Mozart', 'Rossini', 'Bellini', 'Donizetti', 'Puccini'].map(
             (term) => (
               <button
                 key={term}
                 className="badge"
                 onClick={() => navigate(`/search?q=${encodeURIComponent(term)}`)}
                 style={{
-                  padding: '8px 18px',
+                  padding: '9px 20px',
                   cursor: 'pointer',
                   fontSize: 13,
-                  background: '#FFFEF9',
+                  letterSpacing: 1,
                 }}
               >
                 {term}

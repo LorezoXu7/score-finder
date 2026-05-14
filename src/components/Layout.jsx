@@ -15,7 +15,7 @@ export default function Layout() {
           fontFamily: 'var(--serif)',
           fontSize: 14,
           fontWeight: 700,
-          color: '#6D4C41',
+          color: '#8B7355',
           letterSpacing: 2,
           zIndex: 50,
           pointerEvents: 'none',
