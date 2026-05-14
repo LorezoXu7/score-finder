@@ -5,7 +5,9 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const isProduction = process.env.NODE_ENV === 'production';
+const fs = require('fs');
+const distPath = path.resolve(path.join(__dirname, '..', 'dist'));
+const hasDist = fs.existsSync(path.join(distPath, 'index.html'));
 
 app.use(cors());
 app.use(express.json());
@@ -29,7 +31,7 @@ function setCache(key, data) {
 }
 
 // 生产环境：提供前端静态文件
-if (isProduction) {
+if (hasDist) {
   const distPath = path.resolve(path.join(__dirname, '..', 'dist'));
 
   app.use((req, res, next) => {
@@ -225,5 +227,5 @@ app.get('/api/search-domestic', async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`靠谱儿后端服务运行在 http://localhost:${PORT}`);
-  if (isProduction) console.log('生产模式：已启用静态文件服务');
+  if (hasDist) console.log('生产模式：已启用静态文件服务');
 });
