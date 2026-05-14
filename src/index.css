@@ -63,21 +63,10 @@ h1, h2, h3, h4 { font-family: var(--serif); color: var(--ink); }
 .card::before {
   content: '';
   position: absolute;
-  inset: 3px;
-  border: 1px solid rgba(212, 168, 83, 0.25);
-  border-radius: 4px;
-  pointer-events: none;
-}
-.card::after {
-  content: '◆';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: var(--gold);
-  font-size: 10px;
-  background: #FDF8F0;
-  padding: 0 8px;
+  top: 0; left: 12px; right: 12px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.5;
 }
 .card:hover {
   box-shadow: var(--shadow-lg);
