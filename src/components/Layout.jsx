@@ -7,6 +7,9 @@ export default function Layout() {
       <main style={{ flex: 1, paddingBottom: 72 }}>
         <Outlet />
       </main>
+      <footer className="credit">
+        Designed by <span>徐柒</span> · 靠谱儿
+      </footer>
       <Navbar />
     </>
   )

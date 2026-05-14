@@ -8,28 +8,40 @@ export default function Home() {
   return (
     <div className="page">
       {/* 头部 */}
-      <div style={{ textAlign: 'center', padding: '40px 0 24px' }}>
+      <div style={{ textAlign: 'center', padding: '36px 0 20px' }}>
+        <div style={{ fontSize: 48, marginBottom: 4, letterSpacing: 4 }}>🎵</div>
         <h1
           style={{
-            fontSize: 36,
+            fontSize: 38,
             fontWeight: 700,
-            color: '#4E342E',
-            marginBottom: 8,
-            letterSpacing: 2,
+            color: '#3E2723',
+            marginBottom: 6,
+            letterSpacing: 4,
+            fontFamily: 'var(--serif)',
           }}
         >
-          🎼 靠谱儿
+          靠谱儿
         </h1>
-        <p style={{ fontSize: 15, color: '#8D6E63', marginBottom: 24 }}>
-          古典乐谱搜索，一键直达 IMSLP
+        <p style={{ fontSize: 14, color: '#8D6E63', marginBottom: 20, fontStyle: 'italic' }}>
+          —— 古典乐谱 · 触手可及 ——
         </p>
         <SearchBar large />
       </div>
 
+      <div className="divider">❦</div>
+
       {/* 快捷分类 */}
-      <div style={{ marginTop: 8 }}>
-        <h3 style={{ fontSize: 17, color: '#5D4037', marginBottom: 12 }}>
-          按作品类型浏览
+      <div style={{ marginTop: 4 }}>
+        <h3
+          style={{
+            fontSize: 17,
+            color: '#4E342E',
+            marginBottom: 14,
+            fontFamily: 'var(--serif)',
+            letterSpacing: 1,
+          }}
+        >
+          ◆ 按作品类型浏览
         </h3>
         <div
           style={{
@@ -48,24 +60,19 @@ export default function Home() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: 6,
-                padding: '16px 8px',
+                padding: '18px 8px',
                 cursor: 'pointer',
-                border: '1px solid #BCAAA4',
-                background: '#fff',
-                borderRadius: 12,
-                transition: 'transform 0.2s, box-shadow 0.2s',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)'
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(62,39,35,0.2)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = ''
-                e.currentTarget.style.boxShadow = ''
               }}
             >
-              <span style={{ fontSize: 32 }}>{cat.icon}</span>
-              <span style={{ fontSize: 14, fontWeight: 600, color: '#4E342E' }}>
+              <span style={{ fontSize: 30 }}>{cat.icon}</span>
+              <span
+                style={{
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: '#4E342E',
+                  fontFamily: 'var(--serif)',
+                }}
+              >
                 {cat.name}
               </span>
             </button>
@@ -73,10 +80,20 @@ export default function Home() {
         </div>
       </div>
 
+      <div className="divider">♪</div>
+
       {/* 快速入口 */}
-      <div style={{ marginTop: 28 }}>
-        <h3 style={{ fontSize: 17, color: '#5D4037', marginBottom: 12 }}>
-          快速搜索
+      <div>
+        <h3
+          style={{
+            fontSize: 17,
+            color: '#4E342E',
+            marginBottom: 14,
+            fontFamily: 'var(--serif)',
+            letterSpacing: 1,
+          }}
+        >
+          ◆ 快速搜索
         </h3>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           {['Don Giovanni', 'Mozart', 'Verdi', 'Beethoven', 'Chopin', 'Puccini'].map(
@@ -86,10 +103,10 @@ export default function Home() {
                 className="badge"
                 onClick={() => navigate(`/search?q=${encodeURIComponent(term)}`)}
                 style={{
-                  padding: '8px 16px',
+                  padding: '8px 18px',
                   cursor: 'pointer',
-                  border: '1px solid #BCAAA4',
                   fontSize: 13,
+                  background: '#FFFEF9',
                 }}
               >
                 {term}
