@@ -4,21 +4,21 @@ import Navbar from './Navbar'
 export default function Layout() {
   return (
     <>
-      <main style={{ flex: 1, paddingBottom: 72 }}>
+      <main style={{ flex: 1, paddingBottom: 100 }}>
         <Outlet />
       </main>
       <div
         style={{
           position: 'fixed',
-          bottom: 76,
-          right: 12,
+          bottom: 88,
+          right: 24,
           fontFamily: 'var(--serif)',
-          fontSize: 12,
+          fontSize: 11,
           color: '#A1887F',
-          letterSpacing: 1,
+          letterSpacing: 2,
           zIndex: 50,
           pointerEvents: 'none',
-          textShadow: '0 1px 2px rgba(255,255,255,0.8)',
+          opacity: 0.7,
         }}
       >
         徐柒
