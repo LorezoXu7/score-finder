@@ -9,21 +9,38 @@ export default function Home() {
     <div className="page">
       {/* 头部 */}
       <div style={{ textAlign: 'center', padding: '32px 0 20px' }}>
-        <div style={{ fontSize: 48, marginBottom: 4, letterSpacing: 4 }}>🎵</div>
+        <div style={{
+          fontSize: 48,
+          marginBottom: 8,
+          color: '#C9A84C',
+          textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          fontFamily: 'var(--serif)',
+          lineHeight: 1,
+          letterSpacing: 8,
+        }}>
+          ♫ ♯
+        </div>
         <h1
           style={{
-            fontSize: 38,
+            fontSize: 40,
             fontWeight: 700,
             color: '#3E2723',
-            marginBottom: 6,
-            letterSpacing: 4,
+            marginBottom: 4,
+            letterSpacing: 6,
             fontFamily: 'var(--serif)',
+            textShadow: '0 1px 0 rgba(0,0,0,0.08)',
           }}
         >
           靠谱儿
         </h1>
-        <p style={{ fontSize: 14, color: '#8D6E63', marginBottom: 20, fontStyle: 'italic' }}>
-          —— 古典乐谱 · 触手可及 ——
+        <p style={{
+          fontSize: 15,
+          color: '#8D6E63',
+          marginBottom: 20,
+          fontFamily: 'var(--art)',
+          letterSpacing: 2,
+        }}>
+          古典乐谱 · 触手可及
         </p>
         <SearchBar large />
       </div>

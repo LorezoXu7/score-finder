@@ -14,11 +14,12 @@ export default function Layout() {
           right: 20,
           fontFamily: 'var(--serif)',
           fontSize: 14,
-          color: '#8D6E63',
+          fontWeight: 700,
+          color: '#6D4C41',
           letterSpacing: 2,
           zIndex: 50,
           pointerEvents: 'none',
-          opacity: 0.75,
+          opacity: 0.85,
         }}
       >
         徐柒 Lorenzo
