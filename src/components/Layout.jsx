@@ -11,17 +11,17 @@ export default function Layout() {
         style={{
           position: 'fixed',
           bottom: 88,
-          right: 24,
+          right: 20,
           fontFamily: 'var(--serif)',
-          fontSize: 11,
-          color: '#A1887F',
+          fontSize: 14,
+          color: '#8D6E63',
           letterSpacing: 2,
           zIndex: 50,
           pointerEvents: 'none',
-          opacity: 0.7,
+          opacity: 0.75,
         }}
       >
-        徐柒
+        徐柒 Lorenzo
       </div>
       <Navbar />
     </>
