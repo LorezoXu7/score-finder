@@ -93,44 +93,8 @@ app.get('/api/search-domestic', async (req, res) => {
   res.json(results);
 });
 
-// === 同步码功能：跨设备互通数据 ===
-const syncStore = new Map(); // code -> { data, expires }
-
-// 生成6位随机码
-function generateCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
-  return code;
-}
-
-// 上传数据，返回同步码
-app.post('/api/sync/upload', express.json(), (req, res) => {
-  const { favorites, history, tags } = req.body;
-  const code = generateCode();
-  syncStore.set(code, {
-    data: { favorites: favorites || [], history: history || [], tags: tags || {} },
-    expires: Date.now() + 30 * 60 * 1000, // 30分钟有效
-  });
-  // 清理过期数据
-  for (const [k, v] of syncStore) {
-    if (Date.now() > v.expires) syncStore.delete(k);
-  }
-  res.json({ code });
-});
-
-// 下载数据
-app.get('/api/sync/download', (req, res) => {
-  const code = (req.query.code || '').toUpperCase().trim();
-  if (!code) return res.status(400).json({ error: 'Missing code' });
-  const entry = syncStore.get(code);
-  if (!entry || Date.now() > entry.expires) {
-    syncStore.delete(code);
-    return res.status(404).json({ error: '同步码已过期或不存在，请重新生成' });
-  }
-  syncStore.delete(code); // 一次性使用
-  res.json(entry.data);
-});
+// === 同步：数据导出导入（无需服务器存储）===
+// 同步功能已改为前端导出/导入 JSON 文件，不依赖后端
 
 // PDF download proxy
 app.get('/api/download', async (req, res) => {

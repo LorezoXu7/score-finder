@@ -18,8 +18,6 @@ export default function MyScores() {
   const navigate = useNavigate()
 
   // 同步相关
-  const [syncCode, setSyncCode] = useState('')
-  const [syncInput, setSyncInput] = useState('')
   const [syncMsg, setSyncMsg] = useState('')
   const [syncLoading, setSyncLoading] = useState(false)
 
@@ -51,70 +49,6 @@ export default function MyScores() {
     refresh()
   }
 
-  // 上传数据生成同步码
-  const handleUpload = async () => {
-    setSyncLoading(true)
-    setSyncMsg('')
-    try {
-      const res = await fetch('/api/sync/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          favorites: getFavorites(),
-          history: getHistory(),
-          tags: getTags(),
-        }),
-      })
-      const data = await res.json()
-      if (data.code) {
-        setSyncCode(data.code)
-        setSyncMsg('同步码已生成，30分钟内有效')
-      }
-    } catch {
-      setSyncMsg('上传失败，请检查网络')
-    } finally {
-      setSyncLoading(false)
-    }
-  }
-
-  // 用同步码下载数据
-  const handleDownload = async () => {
-    if (!syncInput.trim()) return
-    setSyncLoading(true)
-    setSyncMsg('')
-    try {
-      const res = await fetch(`/api/sync/download?code=${encodeURIComponent(syncInput.trim())}`)
-      if (!res.ok) {
-        const err = await res.json()
-        setSyncMsg(err.error || '同步失败')
-        return
-      }
-      const { favorites: favs, history: hist, tags } = await res.json()
-
-      // 合并到本地存储（不覆盖已有数据）
-      const existingFavs = getFavorites()
-      const existingHist = getHistory()
-      const existingTags = getTags()
-
-      const mergedFavs = [...favs.filter((f) => !existingFavs.some((e) => e.id === f.id)), ...existingFavs]
-      const mergedHist = [...hist.filter((h) => !existingHist.some((e) => e.id === h.id)), ...existingHist]
-      const mergedTags = { ...tags, ...existingTags }
-
-      localStorage.setItem('score_favorites', JSON.stringify(mergedFavs))
-      localStorage.setItem('score_history', JSON.stringify(mergedHist.slice(0, 50)))
-      localStorage.setItem('score_tags', JSON.stringify(mergedTags))
-
-      setSyncMsg(`已同步：${favs.length} 个收藏、${hist.length} 条历史`)
-      setSyncInput('')
-      refresh()
-      setTab('favorites')
-    } catch {
-      setSyncMsg('下载失败，请检查网络')
-    } finally {
-      setSyncLoading(false)
-    }
-  }
-
   const formatDate = (ts) => {
     const d = new Date(ts)
     return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
@@ -142,7 +76,7 @@ export default function MyScores() {
         {tabs.map((t) => (
           <button
             key={t.key}
-            onClick={() => { setTab(t.key); setSyncMsg(''); setSyncCode('') }}
+            onClick={() => { setTab(t.key); setSyncMsg('') }}
             style={{
               padding: '8px 20px', borderRadius: 20, border: 'none',
               fontWeight: 600, fontSize: 14,
@@ -264,76 +198,98 @@ export default function MyScores() {
       {/* 同步 */}
       {tab === 'sync' && (
         <div>
-          {/* 上传 */}
+          {/* 导出 */}
           <div className="card" style={{ marginBottom: 20 }}>
             <h3 style={{ fontSize: 16, color: '#4E342E', marginBottom: 12, fontFamily: 'var(--serif)' }}>
-              📤 这台设备 → 另一台设备
+              📤 导出数据
             </h3>
             <p style={{ fontSize: 13, color: '#8D6E63', marginBottom: 14 }}>
-              上传你的收藏和历史数据，生成一个同步码。在另一台设备输入此码即可同步。
+              把收藏、历史和标签下载为一个文件，发送到另一台设备。
             </p>
             <button
               className="btn btn-primary btn-block"
-              onClick={handleUpload}
-              disabled={syncLoading}
-              style={{ marginBottom: syncCode ? 14 : 0 }}
+              onClick={() => {
+                const data = {
+                  favorites: getFavorites(),
+                  history: getHistory(),
+                  tags: getTags(),
+                  exportedAt: new Date().toISOString(),
+                }
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `靠谱儿-备份-${new Date().toISOString().slice(0, 10)}.json`
+                a.click()
+                URL.revokeObjectURL(url)
+                setSyncMsg('导出成功！把文件发送到另一台设备后导入即可')
+              }}
             >
-              {syncLoading ? '生成中...' : '生成同步码'}
+              下载备份文件
             </button>
-            {syncCode && (
-              <div style={{
-                textAlign: 'center', padding: '16px',
-                background: 'linear-gradient(180deg, #FFF8E1 0%, #F5F0EB 100%)',
-                borderRadius: 8, border: '1px solid #E8D5A3',
-                marginTop: 12,
-              }}>
-                <p style={{ fontSize: 12, color: '#8D6E63', marginBottom: 6 }}>你的同步码</p>
-                <p style={{
-                  fontSize: 32, fontWeight: 700, color: '#4E342E',
-                  letterSpacing: 6, fontFamily: 'monospace',
-                }}>
-                  {syncCode}
-                </p>
-                <p style={{ fontSize: 11, color: '#A1887F', marginTop: 6 }}>30分钟内有效 · 请在另一台设备输入</p>
-              </div>
-            )}
           </div>
 
-          {/* 下载 */}
+          {/* 导入 */}
           <div className="card">
             <h3 style={{ fontSize: 16, color: '#4E342E', marginBottom: 12, fontFamily: 'var(--serif)' }}>
-              📥 另一台设备 → 这台设备
+              📥 导入数据
             </h3>
             <p style={{ fontSize: 13, color: '#8D6E63', marginBottom: 14 }}>
-              输入另一台设备上生成的同步码，将数据同步到这台设备。
+              选择之前导出的备份文件，将数据合并到这台设备。（不会覆盖已有数据）
             </p>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <input
-                className="input"
-                type="text"
-                placeholder="输入 6 位同步码"
-                value={syncInput}
-                onChange={(e) => setSyncInput(e.target.value.toUpperCase())}
-                maxLength={6}
-                style={{ flex: 1, fontSize: 18, textAlign: 'center', letterSpacing: 4, fontFamily: 'monospace' }}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleDownload() }}
-              />
-              <button
-                className="btn btn-primary"
-                onClick={handleDownload}
-                disabled={syncLoading || syncInput.trim().length < 6}
-              >
-                {syncLoading ? '同步中...' : '同步'}
-              </button>
-            </div>
+            <input
+              type="file"
+              accept=".json"
+              id="import-file"
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                setSyncLoading(true)
+                const reader = new FileReader()
+                reader.onload = (ev) => {
+                  try {
+                    const data = JSON.parse(ev.target.result)
+                    const existingFavs = getFavorites()
+                    const existingHist = getHistory()
+                    const existingTags = getTags()
+
+                    const mergedFavs = [...(data.favorites || []).filter((f) => !existingFavs.some((e) => e.id === f.id)), ...existingFavs]
+                    const mergedHist = [...(data.history || []).filter((h) => !existingHist.some((e) => e.id === h.id)), ...existingHist]
+                    const mergedTags = { ...data.tags, ...existingTags }
+
+                    localStorage.setItem('score_favorites', JSON.stringify(mergedFavs))
+                    localStorage.setItem('score_history', JSON.stringify(mergedHist.slice(0, 50)))
+                    localStorage.setItem('score_tags', JSON.stringify(mergedTags))
+
+                    setSyncMsg(`导入成功！已合并 ${data.favorites?.length || 0} 个收藏、${data.history?.length || 0} 条历史`)
+                    refresh()
+                    setTab('favorites')
+                  } catch {
+                    setSyncMsg('文件格式错误，请选择正确的备份文件')
+                  }
+                  setSyncLoading(false)
+                  e.target.value = ''
+                }
+                reader.readAsText(file)
+              }}
+            />
+            <button
+              className="btn btn-outline btn-block"
+              onClick={() => document.getElementById('import-file').click()}
+              disabled={syncLoading}
+            >
+              {syncLoading ? '导入中...' : '选择备份文件导入'}
+            </button>
           </div>
 
           {/* 消息 */}
           {syncMsg && (
             <div style={{
               textAlign: 'center', padding: '14px', marginTop: 16,
-              borderRadius: 8, fontSize: 14, color: syncMsg.includes('失败') || syncMsg.includes('过期') ? '#C62828' : '#2E7D32',
-              background: syncMsg.includes('失败') || syncMsg.includes('过期') ? '#FFEBEE' : '#E8F5E9',
+              borderRadius: 8, fontSize: 14,
+              color: syncMsg.includes('失败') || syncMsg.includes('错误') ? '#C62828' : '#2E7D32',
+              background: syncMsg.includes('失败') || syncMsg.includes('错误') ? '#FFEBEE' : '#E8F5E9',
             }}>
               {syncMsg}
             </div>
