@@ -1,7 +1,5 @@
 /* === 靠谱儿 - 古典立体风格 === */
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Ma+Shan+Zheng&display=swap');
-
 :root {
   --brown-dark: #3E2723;
   --brown: #5D4037;
@@ -25,8 +23,8 @@
   --shadow-inner: inset 0 2px 4px rgba(0,0,0,0.06);
   --radius: 10px;
   --max-width: 960px;
-  --serif: 'Noto Serif SC', 'STSong', 'SimSun', 'Songti SC', serif;
-  --art: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', cursive;
+  --serif: 'STSong', 'SimSun', 'Songti SC', 'Noto Serif SC', 'KaiTi', serif;
+  --art: 'STKaiti', 'KaiTi', '楷体', cursive;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }

@@ -10,14 +10,15 @@ export default function Home() {
       {/* 头部 */}
       <div style={{ textAlign: 'center', padding: '32px 0 20px' }}>
         <div style={{
-          fontSize: 56,
+          fontSize: 48,
           marginBottom: 8,
           color: '#C9A84C',
-          textShadow: '0 2px 4px rgba(0,0,0,0.1), 0 1px 0 rgba(255,255,255,0.5)',
+          textShadow: '0 2px 4px rgba(0,0,0,0.1)',
           fontFamily: 'var(--serif)',
           lineHeight: 1,
+          letterSpacing: 8,
         }}>
-          &#119070;
+          &#9835; &#9839;
         </div>
         <h1
           style={{
