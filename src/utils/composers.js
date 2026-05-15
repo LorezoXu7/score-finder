@@ -69,6 +69,7 @@ export const periods = [
 
 export const categories = [
   { key: 'opera', name: '歌剧', icon: '🎭', query: 'opera' },
+  { key: 'aria', name: '咏叹调', icon: '🎙️', query: 'aria' },
   { key: 'symphony', name: '交响乐', icon: '🎻', query: 'symphony' },
   { key: 'concerto', name: '协奏曲', icon: '🎹', query: 'concerto' },
   { key: 'chamber', name: '室内乐', icon: '🎼', query: 'chamber music' },
