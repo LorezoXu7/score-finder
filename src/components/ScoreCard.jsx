@@ -2,9 +2,14 @@ import { useState, useEffect } from 'react'
 import { isFavorite, addFavorite, removeFavorite, addHistory } from '../utils/storage'
 import CopyrightNotice from './CopyrightNotice'
 
+const API = window.location.hostname.includes('github.io')
+  ? 'https://score-finder-beryl.vercel.app'
+  : ''
+
 export default function ScoreCard({ score, onToggle }) {
   const [fav, setFav] = useState(false)
   const [showCopyright, setShowCopyright] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     setFav(isFavorite(score.id))
@@ -22,18 +27,35 @@ export default function ScoreCard({ score, onToggle }) {
   }
 
   const handleDownload = () => {
-    setShowCopyright(true)
+    if (score.source === 'IMSLP') {
+      setShowCopyright(true)
+    } else {
+      // 非 IMSLP 来源直接打开链接
+      addHistory(score)
+      window.open(score.url, '_blank')
+      onToggle?.()
+    }
   }
 
-  const confirmDownload = () => {
+  const confirmDownload = async () => {
     setShowCopyright(false)
+    setLoading(true)
     addHistory(score)
-    // 有 PDF 直链就用直链，没有则打开页面
-    window.open(score.pdfUrl || score.url, '_blank')
+
+    // 尝试获取 PDF 直链
+    let downloadUrl = score.url
+    if (score.source === 'IMSLP' && score.id) {
+      try {
+        const res = await fetch(`${API}/api/pdf-link?id=${score.id}`)
+        const data = await res.json()
+        if (data.pdfUrl) downloadUrl = data.pdfUrl
+      } catch { /* fallback to page URL */ }
+    }
+
+    setLoading(false)
+    window.open(downloadUrl, '_blank')
     onToggle?.()
   }
-
-  const hasPdf = !!score.pdfUrl
 
   return (
     <div className="card" style={{ marginBottom: 12 }}>
@@ -75,10 +97,10 @@ export default function ScoreCard({ score, onToggle }) {
           <button
             className="btn btn-sm btn-outline"
             onClick={handleDownload}
-            title={hasPdf ? '直接下载 PDF' : '打开页面查看'}
-            style={hasPdf ? { borderColor: '#D4A853', color: '#B8860B' } : {}}
+            disabled={loading}
+            title="下载 / 查看"
           >
-            {hasPdf ? 'PDF' : '🔗'}
+            {loading ? '...' : '📥'}
           </button>
           <button
             className="btn btn-sm"

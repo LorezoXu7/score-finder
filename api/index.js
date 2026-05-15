@@ -31,17 +31,13 @@ app.get('/api/search', async (req, res) => {
     });
     const items = resp.data.query?.search || [];
 
-    // 并发获取每个作品的 PDF 链接
-    const results = await Promise.all(items.map(async (item) => {
-      const pdfUrl = await findIMSLPpdf(item.pageid);
-      return {
-        id: item.pageid,
-        title: item.title.replace(/ \(.*\)$/, ''),
-        snippet: item.snippet.replace(/<[^>]*>/g, ''),
-        url: `https://imslp.org/wiki/${encodeURIComponent(item.title)}`,
-        pdfUrl, // 直链 PDF，null 表示未找到
-        source: 'IMSLP',
-      };
+    // 快速返回搜索结果（PDF 按需查询）
+    const results = items.map((item) => ({
+      id: item.pageid,
+      title: item.title.replace(/ \(.*\)$/, ''),
+      snippet: item.snippet.replace(/<[^>]*>/g, ''),
+      url: `https://imslp.org/wiki/${encodeURIComponent(item.title)}`,
+      source: 'IMSLP',
     }));
 
     setCache(cacheKey, results);
@@ -72,6 +68,22 @@ async function findIMSLPpdf(pageId) {
     return null;
   }
 }
+
+// 获取 IMSLP 作品的 PDF 直链
+app.get('/api/pdf-link', async (req, res) => {
+  const pageId = req.query.id;
+  if (!pageId) return res.status(400).json({ error: 'Missing page id' });
+  const cacheKey = `pdf:${pageId}`;
+  const cached = getCached(cacheKey);
+  if (cached) return res.json({ pdfUrl: cached });
+  try {
+    const pdfUrl = await findIMSLPpdf(parseInt(pageId));
+    setCache(cacheKey, pdfUrl);
+    res.json({ pdfUrl });
+  } catch {
+    res.json({ pdfUrl: null });
+  }
+});
 
 // ============ 全球免费乐谱源搜索 ============
 app.get('/api/search-global', async (req, res) => {
