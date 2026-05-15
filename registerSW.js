@@ -1,1 +1,1 @@
-if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/Git/score-finder/sw.js', { scope: '/Git/score-finder/' })})}
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/score-finder/sw.js', { scope: '/score-finder/' })})}
