@@ -3,6 +3,10 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import SearchBar from '../components/SearchBar'
 import ScoreCard from '../components/ScoreCard'
 
+const API = window.location.hostname.includes('github.io')
+  ? 'https://score-finder-beryl.vercel.app'
+  : ''
+
 export default function Search() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
@@ -24,7 +28,7 @@ export default function Search() {
         domestic: '/api/search-domestic',
       }
       const endpoint = endpoints[src] || '/api/search'
-      const res = await fetch(`${endpoint}?q=${encodeURIComponent(q)}`)
+      const res = await fetch(`${API}${endpoint}?q=${encodeURIComponent(q)}`)
       if (!res.ok) throw new Error('搜索请求失败')
       const data = await res.json()
       setResults(data)
