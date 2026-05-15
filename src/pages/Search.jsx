@@ -1,57 +1,56 @@
-import { useState, useEffect, useCallback } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useState, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import SearchBar from '../components/SearchBar'
 import ScoreCard from '../components/ScoreCard'
 
-const API = window.location.hostname.includes('github.io')
-  ? 'https://score-finder-beryl.vercel.app'
-  : ''
+function imslpResults(query) {
+  const q = encodeURIComponent(query)
+  return [{
+    id: 'imslp', title: `在 IMSLP 搜索「${query}」`,
+    snippet: '国际乐谱图书馆计划 · 全球最大免费乐谱资源库',
+    url: `https://imslp.org/wiki/Special:Search?search=${q}`,
+    source: 'IMSLP',
+  }]
+}
+
+function globalResults(query) {
+  const q = encodeURIComponent(query)
+  return [
+    { id: 'imslp', title: `在 IMSLP 搜索「${query}」`, snippet: '国际乐谱图书馆计划', url: `https://imslp.org/wiki/Special:Search?search=${q}`, source: 'IMSLP' },
+    { id: 'cpdl', title: `在 CPDL 搜索「${query}」`, snippet: '合唱公共领域图书馆 · 声乐/合唱作品', url: `https://www.cpdl.org/wiki/index.php?search=${q}`, source: 'CPDL' },
+    { id: 'musescore', title: `在 MuseScore 搜索「${query}」`, snippet: '全球最大社区乐谱平台', url: `https://musescore.com/sheetmusic?text=${q}`, source: 'MuseScore' },
+    { id: 'mutopia', title: `在 Mutopia 搜索「${query}」`, snippet: '自由版权古典乐谱 · PDF/MIDI', url: `https://www.mutopiaproject.org/cgibin/make-table.cgi?searchingfor=${q}`, source: 'Mutopia' },
+    { id: '8notes', title: `在 8notes 搜索「${query}」`, snippet: '免费古典乐谱 · 按难度分级', url: `https://www.8notes.com/${q}/`, source: '8notes' },
+    { id: 'freescores', title: `在 Free-scores 搜索「${query}」`, snippet: '免费乐谱下载 · 多种编制', url: `https://www.free-scores.com/search_uk.php?search=${q}`, source: 'Free-scores' },
+  ]
+}
+
+function domesticResults(query) {
+  const q = encodeURIComponent(query)
+  return [
+    { id: 'baidu', title: `在百度搜索「${query} 乐谱 PDF」`, snippet: '中文搜索 · 覆盖国内乐谱资源', url: `https://www.baidu.com/s?wd=${encodeURIComponent(query + ' 乐谱 PDF')}`, source: '百度' },
+    { id: 'tan8', title: `在弹琴吧搜索「${query}」`, snippet: '钢琴谱为主的国内乐谱社区', url: `https://www.tan8.com/search?key=${q}`, source: '弹琴吧' },
+    { id: 'gangqinpu', title: `在虫虫钢琴搜索「${query}」`, snippet: '国内知名钢琴谱网站', url: `https://www.gangqinpu.com/search.html?keyword=${q}`, source: '虫虫钢琴' },
+    { id: 'qupu123', title: `在曲谱网搜索「${query}」`, snippet: '综合曲谱资源', url: `http://www.qupu123.com/search?keyword=${q}`, source: '曲谱网' },
+    { id: 'zhaopu', title: `在找谱网搜索「${query}」`, snippet: '乐谱检索网站', url: `http://www.zhaopu123.com/search?key=${q}`, source: '找谱网' },
+  ]
+}
 
 export default function Search() {
   const [searchParams] = useSearchParams()
-  const navigate = useNavigate()
   const query = searchParams.get('q') || ''
-  const [results, setResults] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [refreshKey, setRefreshKey] = useState(0)
   const [source, setSource] = useState('imslp')
 
-  const doSearch = useCallback(async (q, src) => {
-    if (!q.trim()) return
-    setLoading(true)
-    setError('')
-    try {
-      const endpoints = {
-        imslp: '/api/search',
-        global: '/api/search-global',
-        domestic: '/api/search-domestic',
-      }
-      const endpoint = endpoints[src] || '/api/search'
-      const res = await fetch(`${API}${endpoint}?q=${encodeURIComponent(q)}`)
-      if (!res.ok) throw new Error('搜索请求失败')
-      const data = await res.json()
-      setResults(data)
-    } catch (err) {
-      setError('搜索时遇到问题，请检查网络后重试')
-      setResults([])
-    } finally {
-      setLoading(false)
+  const results = useMemo(() => {
+    if (!query.trim()) return []
+    switch (source) {
+      case 'global': return globalResults(query)
+      case 'domestic': return domesticResults(query)
+      default: return imslpResults(query)
     }
-  }, [])
+  }, [query, source])
 
-  useEffect(() => {
-    if (query) doSearch(query, source)
-  }, [query, source, doSearch])
-
-  const handleSourceChange = (src) => {
-    setSource(src)
-    if (query) doSearch(query, src)
-  }
-
-  const refresh = () => setRefreshKey((k) => k + 1)
-
-  const sourceLabel = { imslp: 'IMSLP', global: '全球资源', domestic: '国内资源' }[source] || 'IMSLP'
+  const labels = { imslp: 'IMSLP', global: '全球资源', domestic: '国内资源' }
 
   return (
     <div className="page">
@@ -59,65 +58,32 @@ export default function Search() {
         <SearchBar initial={query} />
       </div>
 
-      {/* 数据源切换 */}
       {query && (
         <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
-          <button
-            onClick={() => handleSourceChange('imslp')}
-            className={source === 'imslp' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
-          >
-            IMSLP
-          </button>
-          <button
-            onClick={() => handleSourceChange('global')}
-            className={source === 'global' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
-          >
-            全球资源
-          </button>
-          <button
-            onClick={() => handleSourceChange('domestic')}
-            className={source === 'domestic' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
-          >
-            国内资源
-          </button>
+          {['imslp', 'global', 'domestic'].map((s) => (
+            <button key={s} onClick={() => setSource(s)}
+              className={source === s ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}>
+              {labels[s]}
+            </button>
+          ))}
         </div>
       )}
 
       {!query && (
         <div className="empty-state">
-          <div className="icon">🔍</div>
+          <div className="icon">&#x1F50D;</div>
           <h3>输入关键词开始搜索</h3>
-          <p>支持按作曲家、作品名称搜索，可切换国际/国内数据源</p>
+          <p>搜索后点击链接即可跳转到对应网站下载乐谱</p>
         </div>
       )}
 
-      {loading && <div className="spinner" />}
-
-      {error && (
-        <div style={{ textAlign: 'center', padding: 24, color: '#8D6E63', fontSize: 14 }}>
-          <p>{error}</p>
-          <button className="btn btn-outline btn-sm" style={{ marginTop: 12 }} onClick={() => doSearch(query, source)}>
-            重试
-          </button>
-        </div>
-      )}
-
-      {!loading && !error && query && results.length === 0 && (
-        <div className="empty-state">
-          <div className="icon">📭</div>
-          <h3>未找到相关乐谱</h3>
-          <p>试试其他关键词，或切换到另一数据源再搜</p>
-        </div>
-      )}
-
-      {!loading &&
-        results.map((score) => (
-          <ScoreCard key={score.id} score={score} onToggle={refresh} />
-        ))}
+      {results.map((score) => (
+        <ScoreCard key={score.id} score={score} onToggle={() => {}} />
+      ))}
 
       {results.length > 0 && (
-        <p style={{ textAlign: 'center', fontSize: 12, color: '#A1887F', marginTop: 16 }}>
-          共找到 {results.length} 条结果 · 数据来自 {sourceLabel}
+        <p style={{ textAlign: 'center', fontSize: 12, color: '#9B8A7A', marginTop: 16 }}>
+          {results.length} 个搜索入口 · 数据来自 {labels[source]}
         </p>
       )}
     </div>
