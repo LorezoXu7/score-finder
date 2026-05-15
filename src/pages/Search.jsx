@@ -11,14 +11,19 @@ export default function Search() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [refreshKey, setRefreshKey] = useState(0)
-  const [source, setSource] = useState('imslp') // 'imslp' | 'domestic'
+  const [source, setSource] = useState('imslp')
 
   const doSearch = useCallback(async (q, src) => {
     if (!q.trim()) return
     setLoading(true)
     setError('')
     try {
-      const endpoint = src === 'domestic' ? '/api/search-domestic' : '/api/search'
+      const endpoints = {
+        imslp: '/api/search',
+        global: '/api/search-global',
+        domestic: '/api/search-domestic',
+      }
+      const endpoint = endpoints[src] || '/api/search'
       const res = await fetch(`${endpoint}?q=${encodeURIComponent(q)}`)
       if (!res.ok) throw new Error('搜索请求失败')
       const data = await res.json()
@@ -42,7 +47,7 @@ export default function Search() {
 
   const refresh = () => setRefreshKey((k) => k + 1)
 
-  const sourceLabel = source === 'domestic' ? '国内资源' : 'IMSLP'
+  const sourceLabel = { imslp: 'IMSLP', global: '全球资源', domestic: '国内资源' }[source] || 'IMSLP'
 
   return (
     <div className="page">
@@ -52,24 +57,24 @@ export default function Search() {
 
       {/* 数据源切换 */}
       {query && (
-        <div
-          style={{
-            display: 'flex',
-            gap: 8,
-            marginBottom: 16,
-          }}
-        >
+        <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
           <button
             onClick={() => handleSourceChange('imslp')}
             className={source === 'imslp' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
           >
-            🌍 IMSLP 国际
+            IMSLP
+          </button>
+          <button
+            onClick={() => handleSourceChange('global')}
+            className={source === 'global' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
+          >
+            全球资源
           </button>
           <button
             onClick={() => handleSourceChange('domestic')}
             className={source === 'domestic' ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm'}
           >
-            🇨🇳 国内资源
+            国内资源
           </button>
         </div>
       )}

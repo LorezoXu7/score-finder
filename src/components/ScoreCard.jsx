@@ -28,9 +28,12 @@ export default function ScoreCard({ score, onToggle }) {
   const confirmDownload = () => {
     setShowCopyright(false)
     addHistory(score)
-    window.open(score.url, '_blank')
+    // 有 PDF 直链就用直链，没有则打开页面
+    window.open(score.pdfUrl || score.url, '_blank')
     onToggle?.()
   }
+
+  const hasPdf = !!score.pdfUrl
 
   return (
     <div className="card" style={{ marginBottom: 12 }}>
@@ -72,9 +75,10 @@ export default function ScoreCard({ score, onToggle }) {
           <button
             className="btn btn-sm btn-outline"
             onClick={handleDownload}
-            title="下载 / 查看"
+            title={hasPdf ? '直接下载 PDF' : '打开页面查看'}
+            style={hasPdf ? { borderColor: '#D4A853', color: '#B8860B' } : {}}
           >
-            📥
+            {hasPdf ? 'PDF' : '🔗'}
           </button>
           <button
             className="btn btn-sm"
