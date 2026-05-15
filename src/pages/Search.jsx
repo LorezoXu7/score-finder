@@ -42,6 +42,9 @@ function domesticResults(query) {
     { id: 'jitapu', title: `在吉他谱网搜索「${query}」`, snippet: '中文吉他谱资源站', url: `https://www.jitapu.com/search?q=${q}`, source: '吉他谱网' },
     { id: 'docin', title: `在豆丁网搜索「${query} 乐谱」`, snippet: '文档分享平台 · 含大量乐谱PDF', url: `https://www.docin.com/search.do?searchcat=2&searchType_banner=p&nkey=${q}`, source: '豆丁网' },
     { id: 'doc88', title: `在道客巴巴搜索「${query} 乐谱」`, snippet: '文档分享平台 · 乐谱资料丰富', url: `https://www.doc88.com/search?keyword=${q}`, source: '道客巴巴' },
+    { id: 'bilibili', title: `在哔哩哔哩搜索「${query} 读谱」`, snippet: 'B站读谱视频 · 跟随乐谱欣赏名曲', url: `https://search.bilibili.com/all?keyword=${encodeURIComponent(query + ' 读谱')}`, source: '哔哩哔哩' },
+    { id: 'bilibili2', title: `在哔哩哔哩搜索「${query} 乐谱」`, snippet: 'B站乐谱教程/翻弹/演奏视频', url: `https://search.bilibili.com/all?keyword=${encodeURIComponent(query + ' 乐谱')}`, source: '哔哩哔哩' },
+    { id: 'douyin', title: `在抖音搜索「${query} 乐谱」`, snippet: '抖音乐谱短视频 · 读谱/演奏/教程', url: `https://www.douyin.com/search/${encodeURIComponent(query + ' 乐谱')}`, source: '抖音' },
   ]
 }
 
