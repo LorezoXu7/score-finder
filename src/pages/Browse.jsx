@@ -3,10 +3,41 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { periods, categories } from '../utils/composers'
 import { getWorks } from '../utils/works'
 
+function WorkLinks({ composer, work }) {
+  const q = encodeURIComponent(composer + ' ' + work)
+  return (
+    <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid #E5D8C0' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+        <a href={`https://imslp.org/wiki/Special:Search?search=${q}`} target="_blank" rel="noopener noreferrer"
+          className="badge" style={{ fontSize: 11, textDecoration: 'none' }}>
+          IMSLP
+        </a>
+        <a href={`https://www.cpdl.org/wiki/index.php?search=${q}`} target="_blank" rel="noopener noreferrer"
+          className="badge" style={{ fontSize: 11, textDecoration: 'none' }}>
+          CPDL
+        </a>
+        <a href={`https://musescore.com/sheetmusic?text=${q}`} target="_blank" rel="noopener noreferrer"
+          className="badge" style={{ fontSize: 11, textDecoration: 'none' }}>
+          MuseScore
+        </a>
+        <a href={`https://www.baidu.com/s?wd=${encodeURIComponent(composer + ' ' + work + ' 乐谱 PDF')}`} target="_blank" rel="noopener noreferrer"
+          className="badge" style={{ fontSize: 11, textDecoration: 'none' }}>
+          百度
+        </a>
+        <a href={`https://search.bilibili.com/all?keyword=${encodeURIComponent(composer + ' ' + work + ' 读谱')}`} target="_blank" rel="noopener noreferrer"
+          className="badge" style={{ fontSize: 11, textDecoration: 'none' }}>
+          B站读谱
+        </a>
+      </div>
+    </div>
+  )
+}
+
 export default function Browse() {
   const { category } = useParams()
   const navigate = useNavigate()
   const [selectedComposer, setSelectedComposer] = useState(null)
+  const [expandedWork, setExpandedWork] = useState(null)
 
   const selectedCategory = categories.find((c) => c.key === category)
 
@@ -16,7 +47,7 @@ export default function Browse() {
     return (
       <div className="page">
         <div style={{ marginBottom: 20 }}>
-          <button className="btn btn-outline btn-sm" onClick={() => setSelectedComposer(null)}>
+          <button className="btn btn-outline btn-sm" onClick={() => { setSelectedComposer(null); setExpandedWork(null) }}>
             ← 返回
           </button>
         </div>
@@ -24,30 +55,37 @@ export default function Browse() {
           {selectedComposer.name}
         </h2>
         <p style={{ fontSize: 13, color: '#6B5A4E', marginBottom: 20 }}>
-          {worksList.length > 0 ? '点击作品名即可搜索乐谱' : '暂无作品数据，可直接搜索'}
+          点击作品名展开搜索入口，选择网站直达
         </p>
 
         {worksList.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {worksList.map((work) => (
-              <button
-                key={work}
-                className="card"
-                onClick={() => navigate(`/search?q=${encodeURIComponent(selectedComposer.query + ' ' + work)}`)}
-                style={{
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  padding: '14px 16px', cursor: 'pointer', textAlign: 'left',
-                }}
-              >
-                <span style={{ fontWeight: 600, color: '#1C0F08', fontSize: 15 }}>{work}</span>
-                <span style={{ color: '#C4A64A', fontSize: 18 }}>&#x2197;</span>
-              </button>
-            ))}
+            {worksList.map((work) => {
+              const isOpen = expandedWork === work
+              return (
+                <div key={work} className="card" style={{ padding: isOpen ? '14px 16px 10px' : '14px 16px' }}>
+                  <button
+                    onClick={() => setExpandedWork(isOpen ? null : work)}
+                    style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                      width: '100%', textAlign: 'left', background: 'none', border: 'none',
+                      cursor: 'pointer', padding: 0,
+                    }}
+                  >
+                    <span style={{ fontWeight: 600, color: '#1C0F08', fontSize: 15 }}>{work}</span>
+                    <span style={{ color: '#C4A64A', fontSize: 14, transition: 'transform 0.2s', transform: isOpen ? 'rotate(90deg)' : 'none' }}>
+                      &#x25B6;
+                    </span>
+                  </button>
+                  {isOpen && <WorkLinks composer={selectedComposer.query} work={work} />}
+                </div>
+              )
+            })}
           </div>
         ) : (
           <button className="btn btn-primary btn-block"
             onClick={() => navigate(`/search?q=${encodeURIComponent(selectedComposer.query)}`)}>
-            搜索 {selectedComposer.name} 的乐谱
+            直接搜索 {selectedComposer.name} 的乐谱
           </button>
         )}
       </div>
